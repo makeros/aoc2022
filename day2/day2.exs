@@ -19,6 +19,24 @@ defmodule Game do
     end
   end 
 
+  def getOppositeHand(current, direction) do
+    hands = ["X", "Y", "Z"]
+    case current do
+      "A" -> Enum.at(hands, rem(0 + direction, 3))
+      "B" -> Enum.at(hands, rem(1 + direction, 3))
+      "C" -> Enum.at(hands, rem(2 + direction, 3))
+    end
+
+  end
+
+  def predictMyHand({base_hand, end_result}) do
+    case end_result do
+      "X" -> {base_hand, Game.getOppositeHand(base_hand, -1)}
+      "Y" -> {base_hand, Game.getOppositeHand(base_hand, 0)}
+      "Z" -> {base_hand, Game.getOppositeHand(base_hand, 1)}
+    end
+  end 
+
 end
 
 case File.read("./input.txt") do
@@ -28,17 +46,18 @@ case File.read("./input.txt") do
     |> Enum.map(fn game -> 
       game_status = String.split(game, " ")
         |> List.to_tuple
+        |> Game.predictMyHand
+        |> IO.inspect
+
       oponentHand = elem(game_status, 0)
       myHand = elem(game_status, 1)
       
       Game.calculateGameResultValue({oponentHand, myHand}) + Game.getHandValue(myHand)
     end)
     |> Enum.sum
-  # |> length
+
   {:error, :enoent} ->  
     IO.puts "Error reding file."
 
 end
   |> IO.inspect
-
-  # 8625 wrong
