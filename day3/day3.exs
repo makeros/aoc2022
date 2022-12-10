@@ -4,15 +4,13 @@ case File.read("./input.txt") do
   {:ok, contents} ->
   contents
     |> String.split("\n", trim: true)
-    |> Enum.map(fn rucksack ->
-      compartmentLength = round(String.length(rucksack) / 2)
-      compartment_1 = String.slice(rucksack, 0,compartmentLength)
-      compartment_2 = String.slice(rucksack, compartmentLength, compartmentLength)
-      {compartment_1, compartment_2}
-     end)
-    |> Enum.map(fn {compartment_1, compartment_2} -> 
-      splitted = String.split(compartment_1, "", trim: true)
-      Enum.find(splitted, fn c1 -> Enum.member?(String.split(compartment_2, "", trim: true), c1) end)
+    |> Enum.chunk_every(3)
+    |> Enum.map(fn  [rucksack_1, rucksack_2, rucksack_3]-> 
+      splitted = String.split(rucksack_1, "", trim: true)
+      Enum.find(splitted, fn c1 -> 
+        Enum.member?(String.split(rucksack_2, "", trim: true), c1)
+        and Enum.member?(String.split(rucksack_3, "", trim: true), c1) 
+      end)
       
     end)
     |> Enum.map(fn d -> 
