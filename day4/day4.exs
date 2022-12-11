@@ -8,19 +8,18 @@ case File.read("./input.txt") do
       |> Enum.map(fn ranges -> String.split(ranges, "-", trim: true) end)
     end)
     |> Enum.map(fn group -> 
+
       firstSectionStart = String.to_integer(List.first(List.first(group)))
       firstSectionEnd = String.to_integer(List.last(List.first(group)))
       secondSectionStart = String.to_integer(List.first(List.last(group)))
       secondSectionEnd = String.to_integer(List.last(List.last(group)))
 
-      if (firstSectionStart <= secondSectionStart and firstSectionEnd >= secondSectionEnd) or (firstSectionStart >= secondSectionStart and firstSectionEnd <= secondSectionEnd) do 
-        true
-      else 
-        false
-      end
+      firstSection = Range.new(firstSectionStart, firstSectionEnd)
+      secondSection = Range.new(secondSectionStart, secondSectionEnd)
 
+      Range.disjoint?(firstSection, secondSection)
     end)
-    |> Enum.count(fn x -> x == true end)
+    |> Enum.count(fn x -> x == false end)
     
   {:error, :enoent} ->  
     IO.puts "Error reding file."
